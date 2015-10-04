@@ -16,18 +16,18 @@ public class RGTIDN1 implements KeyListener{
     public static List<Point3i> trianglesList = new LinkedList<Point3i>();
 	public float rx, ry, rz, ty, tz, tx;
 	public float scx=1, scy=1, scz=1, persp = 4;
-	
+
     public static void main(String[] args) {
         //read file to List
         try{
             FileReader fin = new FileReader("inputfile.txt");
             Scanner src = new Scanner(fin);
-            
+
             String str;
             float f1 = 0, f2 = 0, f3=0;
             int i1 = 0, i2 = 0, i3=0;
             while (src.hasNext()) {
-                str = src.next();                
+                str = src.next();
                 if (str.equals("v")){
                     if(src.hasNext()){
                         f1=Float.parseFloat(src.next()); f2=Float.parseFloat(src.next()); f3=Float.parseFloat(src.next());
@@ -41,67 +41,67 @@ public class RGTIDN1 implements KeyListener{
                         i1=Integer.parseInt(src.next()); i2=Integer.parseInt(src.next()); i3=Integer.parseInt(src.next());
                     }
                     trianglesList.add(new Point3i(i1,i2,i3));
-                    
+
                 }
             }
             fin.close();
         }catch(IOException e){
             System.out.println(e);
-        };   
+        };
         MainApp.start(new RGTIDN1());
     }
 	protected boolean over;
 	protected long delay = 50;
 	protected int width = 600, height = 600;
 	protected String title = "RGTI DN1 Tomaz Tomazic";
-	
+
 	// getters
 	public boolean isOver() {
 		return over;
 	}
-	
+
 	public long getDelay() {
 		return delay;
 	}
-	
+
 	public int getWidth() {
 		return width;
 	}
-	
+
 	public int getHeight() {
 		return height;
 	}
-	
+
 	public String getTitle() {
 		return title;
 	}
-	
+
     public void init() {
     }
 
-    
+
     public void update() {
 
     	tmplist1 = new LinkedList<Point4f>();
-    	
+
     	for(int i=0; i<vList.size(); i++){
     		Point4f v = new Point4f(tmplist.get(i).x-vList.get(i).x,tmplist.get(i).y-vList.get(i).y,tmplist.get(i).z-vList.get(i).z,1);
-			
+
     		scale(scx, scy, scz).transform(vList.get(i));
-    		rotateX(rx).transform(vList.get(i)); 
+    		rotateX(rx).transform(vList.get(i));
 			rotateY(ry).transform(vList.get(i));
 			rotateZ(rz).transform(vList.get(i));
-			
+
 			Point4f v1 = new Point4f(vList.get(i));
-    		
+
 			translate(tx+v.x, ty+v.y, tz+v.z).transform(v1);
-    		
+
 			tmplist.get(i).set(v1);
     		tmplist1.add(v1);
     	}
     	rx=0; ry=0; rz=0; tx=0; ty=0; tz=0; scx=1; scy=1; scz=1;
     }
-    
+
     public void cameraon(){
 
     	for(int i=0; i<tmplist1.size(); i++){
@@ -109,7 +109,7 @@ public class RGTIDN1 implements KeyListener{
     		rotateZ((float)Math.PI).transform(tmplist1.get(i));
     		translate(0, 0, -8 ).transform(tmplist1.get(i));
     	}
-    	
+
     }
     public void perspectivaon(){
     	for(int i=0; i<tmplist1.size(); i++){
@@ -117,13 +117,13 @@ public class RGTIDN1 implements KeyListener{
     		tmplist1.get(i).project(tmplist1.get(i));
     	}
     }
-    
+
     public void draw(Graphics g) {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, width, height);
 
         int scala=200;
-        Color[] c = {Color.RED, Color.WHITE, Color.BLUE, Color.GREEN};
+        Color[] c = {Color.RED, Color.WHITE, Color.ORANGE, Color.GREEN};
 
         if(tmplist.size()==0){
         	return;
@@ -138,13 +138,13 @@ public class RGTIDN1 implements KeyListener{
         	catch (Exception e) {
 			}
         }
-        
+
     }
-    
+
     @Override
-	public void keyPressed(KeyEvent e) {		
+	public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
-        switch( keyCode ) { 
+        switch( keyCode ) {
             case KeyEvent.VK_Q:
             	rx=(float)0.05;
                 break;
@@ -168,7 +168,7 @@ public class RGTIDN1 implements KeyListener{
                 break;
             case KeyEvent.VK_DOWN:
             	ty=(float)0.05;
-                break;    
+                break;
             case KeyEvent.VK_RIGHT:
             	tx=(float)0.05;
                 break;
@@ -205,7 +205,7 @@ public class RGTIDN1 implements KeyListener{
 	@Override
 	public void keyTyped(KeyEvent arg0) {
 	}
-	
+
 	Matrix4f rotateX(float alpha){
 		Matrix4f m = new Matrix4f(
 				1,0,0,0,
@@ -223,7 +223,7 @@ public class RGTIDN1 implements KeyListener{
 				0,0,0,1
 		);
 		return m;
-		
+
 	}
 	Matrix4f rotateZ(float alpha){
 		Matrix4f m = new Matrix4f(
@@ -242,7 +242,7 @@ public class RGTIDN1 implements KeyListener{
 				0,0,0,1
 		);
 		return m;
-		
+
 	}
 	Matrix4f scale(float sx, float sy, float sz){
 		Matrix4f m = new Matrix4f(
@@ -252,7 +252,7 @@ public class RGTIDN1 implements KeyListener{
 				0,0,0,1
 		);
 		return m;
-		
+
 	}
 	Matrix4f perspective(float d){
 		Matrix4f m = new Matrix4f(
@@ -262,6 +262,6 @@ public class RGTIDN1 implements KeyListener{
 				0,0,1/d,0
 		);
 		return m;
-		
+
 	}
 }
